@@ -12,7 +12,12 @@
   "author": "Cedric Nicoloso <cedric.nicoloso@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "firebase": "^3.9.0",
+    "firebase-admin": "^5.11.0",
+    "geofire": "^4.1.2",
+    "google-auth-library": "^0.10.0",
+    "googleapis": "^20.1.0"
   },
   "devDependencies": {
     "eslint": "^4.17.0",
