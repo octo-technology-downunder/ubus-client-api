@@ -7,12 +7,12 @@ let GeoFire = require('geofire')
 
 let firebase = require('firebase')
 firebase.initializeApp({
-  apiKey: 'AIzaSyC21n9wUfPdfyE2uMP-p3d4AoIph1O7-FM',
-  authDomain: 'ubus-26f5d.firebaseapp.com',
-  databaseURL: 'https://ubus-26f5d.firebaseio.com',
-  projectId: 'ubus-26f5d',
-  storageBucket: 'ubus-26f5d.appspot.com',
-  messagingSenderId: '322734367935',
+  apiKey: 'AIzaSyCrtgzaW7uj82QSbvnLyCIsxIU778MXqJE',
+  authDomain: 'ubus-4e991.firebaseapp.com',
+  databaseURL: 'https://ubus-4e991.firebaseio.com',
+  projectId: 'ubus-4e991',
+  storageBucket: 'ubus-4e991.appspot.com',
+  messagingSenderId: '715574617670'
 })
 let firebaseDB = firebase.database()
 
