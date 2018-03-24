@@ -11,8 +11,8 @@
   "keywords": [],
   "author": "Team uBus",
   "license": "ISC",
-  "engines" : {
-    "node" : ">=8.0"
+  "engines": {
+    "node": ">=8.0"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
