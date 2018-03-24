@@ -1,7 +1,7 @@
 {
-  "name": "start-node",
-  "version": "0.1.0",
-  "description": "Simple starting point to create a Node.js API",
+  "name": "ubus-client-api",
+  "version": "0.2.0",
+  "description": "uBus Client API",
   "main": "server.js",
   "scripts": {
     "start": "node server",
@@ -9,14 +9,15 @@
     "lint": "eslint . --ext .js"
   },
   "keywords": [],
-  "author": "Cedric Nicoloso <cedric.nicoloso@gmail.com>",
+  "author": "Team uBus",
   "license": "ISC",
+  "engines" : {
+    "node" : ">=8.0"
+  },
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "firebase": "^3.9.0",
-    "firebase-admin": "^5.11.0",
-    "geofire": "^4.1.2",
     "google-auth-library": "^0.10.0",
     "googleapis": "^20.1.0",
     "uuid": "^3.2.1"
