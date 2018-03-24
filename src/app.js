@@ -12,7 +12,7 @@ firebase.initializeApp({
   databaseURL: 'https://ubus-4e991.firebaseio.com',
   projectId: 'ubus-4e991',
   storageBucket: 'ubus-4e991.appspot.com',
-  messagingSenderId: '715574617670'
+  messagingSenderId: '715574617670',
 })
 let firebaseDB = firebase.database()
 
@@ -83,7 +83,7 @@ function calculateETA (id) {
 app.post('/trip', function (req, res) {
   generateUUID()
     .then(function (id) {
-      res.send('{ firebaseRefId:' + id + '}')
+      res.send(id)
       setTimeout(calculateETA, 10000, id)
     })
 })
