@@ -1,3 +1,8 @@
+/**
+ * OR use Google Maps API 'computeDistanceBetween'
+ * google.maps.geometry.spherical.computeDistanceBetween (latLngA, latLngB)
+ */
+
 /** Converts numeric degrees to radians */
 if (typeof(Number.prototype.toRad) === "undefined") {
   Number.prototype.toRad = function () {

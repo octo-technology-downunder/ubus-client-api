@@ -1,3 +1,8 @@
+/**
+ * Let's say that all writes to Firebase need to happen here.
+ * For reads, it's alright to import 'firebase' in other files
+ */
+
 const firebase = require('firebase')
 
 const firebaseConfigNick = {
@@ -18,38 +23,14 @@ const firebaseConfigCni = {
 }
 
 function initFirebase () {
-  console.log('initFirebase()')
   firebase.initializeApp(firebaseConfigCni)
 }
 
-// const pendingRequestsRef = firebase.database().ref('requests/pending')
-
-const clientRequest = {
-  start: [-33.869425, 151.207334],
-  end: [-33.878368, 151.214286],
-}
-
-const clientRequest2 = {
-  start: [-33.871955, 151.204588],
-  end: [-33.883649, 151.214236],
-}
-
-// Also inject to Algolia? To enjoy clustering feature in query
-
-// pendingRequestsRef.push(clientRequest, err => {
-//   if (err) {
-//     console.log('Fail...')
-//     return
-//   }
-//   console.log('Done!')
-//   firebase.database().goOffline()
-// })
-
 /**
- * Request
- * We have received it.
- * We'll take one minute to try to put you on a smart bus, or tell you that we can't...
- * And FYI, the closest bus is xx minutes away (Put a bigger number here to not give false hope to customer,
+ * Receive a request
+ * Display to client: "We have received it."
+ * "We'll take one minute to try to put you on a smart bus, or tell you that we can't..."
+ * "And FYI, the closest bus is xx minutes away" (Put a bigger number here to not give false hope to customer,
  *   as there is little chance that the bus would go to him right now)
  */
 
@@ -62,13 +43,12 @@ const clientRequest2 = {
  * }
  */
 function storeGpsPoints(gpsPointsPair) {
-  pendingRequestsRef.push(gpsPointsPair, err => {
+  firebase.database().ref('requests/pending').push(gpsPointsPair, err => {
     if (err) {
       console.log('Fail...')
       return
     }
     console.log('Done!')
-    // firebase.database().goOffline()
   })
 }
 
@@ -77,15 +57,30 @@ function storeUuid (clientUuid) {
   return firebase.database().ref(clientUuid).set('')
 }
 
-async function updateBusEta (clientUuid) {
-  await firebase.database().ref(clientUuid).set('10')
-  console.log('updateBusEta done for', clientUuid)
+async function updateBusEtaForClient (clientUuid, etaBusMinutes) {
+  firebase.database().ref(clientUuid).set(etaBusMinutes)
+}
+
+async function archiveRequest (clientRequestKey) {
+  try {
+    const clientRequestRef = firebase.database().ref(`requests/pending/${clientRequestKey}`)
+    const newClientRequestRef = firebase.database().ref(`requests/archive/${clientRequestKey}`)
+    const clientRequestSnapshot = await clientRequestRef.once('value')
+    await newClientRequestRef.set(clientRequestSnapshot.val())
+    await clientRequestRef.set(null)
+    console.log('Request moved to archive')
+
+    // Later: Also store bus ETA + actual bus arrival time...
+
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 module.exports = {
-  firebaseConfig: firebaseConfigCni,
   initFirebase,
   storeGpsPoints,
-  updateBusEta,
+  updateBusEtaForClient,
   storeUuid,
+  archiveRequest,
 }

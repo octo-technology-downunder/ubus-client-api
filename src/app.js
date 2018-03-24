@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const { initFirebase, storeGpsPoints, updateBusEta } = require('./firebase.service')
+const { initFirebase, storeGpsPoints } = require('./firebase.service')
 const { generateUuid } = require('./clientUuid')
 const { runClustering } = require('./clustering')
 
@@ -17,24 +17,19 @@ app.all('/', (req, res) => {
 app.all('/trip', bodyParser.json(), async function (req, res) {
 
   // --- 1 ---
-  // Generate and send back uuid
+  // Generate client uuid, store it and send it back
   const clientUuid = await generateUuid()
   res.json({
     uuid: clientUuid,
   })
 
-  // For TESTS
-  setTimeout(() => {
-    updateBusEta(clientUuid)
-  }, 10000)
-
   // --- 2 ---
   // Store GPS start and end points to Firebase
-  // storeGpsPoints()
+  storeGpsPoints()
 
   // --- 3 ---
   // Trigger clustering
-  // runClustering()
+  runClustering()
 })
 
 module.exports = app

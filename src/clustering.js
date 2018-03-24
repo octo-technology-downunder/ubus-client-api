@@ -1,5 +1,7 @@
 const firebase = require('firebase')
+const { updateBusEtaForClient, archiveRequest } = require('./firebase.service')
 const { getDistanceBetweenGpsPoints } = require('./distance')
+const { injectMockedData } = require('./mock')
 
 // TESTS only
 // const { initFirebase } = require('./firebase.service')
@@ -12,30 +14,9 @@ async function runClustering () {
   // Unless one is already running
   if (!clusteringRunning) {
 
-    const mockedPendingTrips = [
-      {
-        clientUuid: '123',
-        start: { lat: -33.869425, long: 151.207334 },
-        end: { lat: -33.878368, long: 151.214286 },
-      }, {
-        clientUuid: '234',
-        start: { lat: -33.871955, long: 151.204588 },
-        end: { lat: -33.883649, long: 151.214236 },
-      }
-    ]
-
-    // TESTS Inject mock data
-    const pendingRequestsRef = firebase.database().ref('requests/pending')
-    await pendingRequestsRef.push(mockedPendingTrips[0])
-    console.log('one done')
-    await pendingRequestsRef.push(mockedPendingTrips[1])
-    console.log('two done')
-
-    // Create fake references for Android app to watch
-    await firebase.database().ref(mockedPendingTrips[0].clientUuid).set('')
-    console.log('First ref done')
-    await firebase.database().ref(mockedPendingTrips[1].clientUuid).set('')
-    console.log('Second ref done')
+    // TESTS
+    const mockedPendingTrips = injectMockedData()
+    console.log('mockedPendingTrips', mockedPendingTrips)
 
     // --- 1 --- Get all pending requests from Firebase
     // const pendingRequestsRef = firebase.database().ref('requests/pending')
@@ -54,30 +35,31 @@ async function runClustering () {
     const clusters = findClusters(mockedPendingTrips)
     console.log('clusters', clusters)
 
-    /**
-     * Example of answer?
-     *
-     */
+    // Example of answer? --> an array of clusters array
 
-    // --- 4 --- Update Firebase with bus ETA for found groups of people
+    // --- 4 --- For each cluster and for each client, calculate bus ETA
+
+    // --- 5 --- Update Firebase with bus ETA for clusters of people
     if (clusters && clusters.length > 0) {
       let minutes = 0
       clusters.forEach(cluster => {
         cluster.forEach(clientTrip => {
+          console.log('clientTrip', clientTrip)
           minutes += 3
-          const clientUuidRef = firebase.database().ref(clientTrip.clientUuid)
-          clientUuidRef.set(minutes)
+          updateBusEtaForClient(clientTrip.clientUuid, minutes)
+
+          // --- 6 --- Archive request
+          archiveRequest(clientTrip.key)
         })
       })
     }
 
-    // --- 5 --- Release requests for which no co-traveler has been found
+    // --- 7 --- Release requests for which no co-traveler has been found
 
-    firebase.database().goOffline()
   }
 
   /**
-   * After 3 failed attempt to cluster one guy, mark the request as "Can't be addressed?
+   * After 3 failed attempt trying to cluster a client, mark the request as "Can't be addressed"?
    */
 }
 
