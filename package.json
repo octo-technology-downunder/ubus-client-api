@@ -12,7 +12,8 @@
   "author": "Team uBus",
   "license": "ISC",
   "engines": {
-    "node": ">=8.0"
+    "node": "9.9.x",
+    "npm": "5.6.x"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
